@@ -1,0 +1,99 @@
+<div class="container">
+    <div class="header">
+        <h1>TODO LIST</h1>
+        <div class="header-actions">
+            <button class="btn btn-primary" id="create-task-btn">Create task</button>
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="btn btn-logout">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="kanban-board" id="kanbanBoard">
+        <div class="kanban-column" data-status="todo">
+            <div class="column-header">
+                <span class="column-title">TO DO</span>
+                <span class="column-count" id="count-todo">
+                    {{ isset($tasks['todo']) ? $tasks['todo']->count() : 0 }}
+                </span>
+            </div>
+            <div class="task-list" id="todo-list">
+                @if (isset($tasks['todo']) && $tasks['todo']->count() > 0)
+                    @foreach ($tasks['todo'] as $task)
+                        <div class="task-card" data-task-id="{{ $task->id }}" data-status="todo" draggable="true">
+                            <div class="task-title">{{ $task->title }}</div>
+                            @if ($task->description)
+                                <div class="task-description">{{ $task->description }}</div>
+                            @endif
+                            <div class="task-meta">
+                                <span>{{ $task->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="empty-state">No tasks</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="kanban-column" data-status="inprogress">
+            <div class="column-header">
+                <span class="column-title">IN PROGRESS</span>
+                <span class="column-count" id="count-inprogress">
+                    {{ isset($tasks['inprogress']) ? $tasks['inprogress']->count() : 0 }}
+                </span>
+            </div>
+            <div class="task-list" id="inprogress-list">
+                @if (isset($tasks['inprogress']) && $tasks['inprogress']->count() > 0)
+                    @foreach ($tasks['inprogress'] as $task)
+                        <div class="task-card" data-task-id="{{ $task->id }}" data-status="inprogress"
+                            draggable="true">
+                            <div class="task-title">{{ $task->title }}</div>
+                            @if ($task->description)
+                                <div class="task-description">{{ $task->description }}</div>
+                            @endif
+                            <div class="task-meta">
+                                <span>{{ $task->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="empty-state">No tasks</div>
+                @endif
+            </div>
+        </div>
+
+        <div class="kanban-column" data-status="done">
+            <div class="column-header">
+                <span class="column-title">DONE</span>
+                <span class="column-count" id="count-done">
+                    {{ isset($tasks['done']) ? $tasks['done']->count() : 0 }}
+                </span>
+            </div>
+            <div class="task-list" id="done-list">
+                @if (isset($tasks['done']) && $tasks['done']->count() > 0)
+                    @foreach ($tasks['done'] as $task)
+                        <div class="task-card" data-task-id="{{ $task->id }}" data-status="done" draggable="true">
+                            <div class="task-title">{{ $task->title }}</div>
+                            @if ($task->description)
+                                <div class="task-description">{{ $task->description }}</div>
+                            @endif
+                            <div class="task-meta">
+                                <span>{{ $task->created_at->format('M d, Y') }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="empty-state">No tasks</div>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="todo-modal-app"></div>
+
+<script>
+    window.tasksData = @json($tasks);
+</script>
