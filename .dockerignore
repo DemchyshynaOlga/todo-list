@@ -1,14 +1,44 @@
 .git
 .gitignore
-.env
+!.env.example
+
+# Dependencies (will be installed in Docker)
+sample/.env
+sample/node_modules
+sample/vendor
 node_modules
 vendor
-storage/logs/*
-storage/framework/cache/*
-storage/framework/sessions/*
-storage/framework/views/*
-bootstrap/cache/*
+
+# Laravel cache and logs
+sample/storage/logs/*
+sample/storage/framework/cache/*
+sample/storage/framework/sessions/*
+sample/storage/framework/views/*
+sample/bootstrap/cache/*
+
+# IDE
 .idea
 .vscode
+
+# Documentation
 *.md
+README.md
+
+# Docker files
+docker-compose.yml
 docker-compose.override.yml
+Dockerfile
+.dockerignore
+
+# Build artifacts (will be built in Docker)
+sample/public/build
+sample/public/hot
+sample/public/storage
+
+# Tests
+sample/tests
+sample/phpunit.xml
+
+# Other
+.DS_Store
+*.log

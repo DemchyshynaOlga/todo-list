@@ -31,15 +31,15 @@ RUN addgroup -g ${uid} ${user} \
     && adduser -G ${user} -u ${uid} -D -h /home/${user} ${user} \
     && addgroup ${user} www-data
 
-WORKDIR /var/www
-
-COPY ./sample/package.json ./sample/package-lock.json* ./sample/
 WORKDIR /var/www/sample
 
-RUN npm ci --silent
+COPY ./sample/composer.json ./sample/composer.lock* ./sample/package.json ./sample/package-lock.json* ./
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts && \
+    npm ci --silent
 
-COPY ./sample/vite.config.js ./vite.config.js
-COPY ./sample/resources ./resources
+COPY ./sample ./
+
+RUN php artisan package:discover --ansi || true
 
 RUN npm run build
 
@@ -51,7 +51,14 @@ COPY ./docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 COPY ./docker/php/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-RUN chown -R ${user}:www-data /var/www
+WORKDIR /var/www/sample
+RUN mkdir -p storage/framework/cache/data \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+    && chown -R ${user}:www-data /var/www \
+    && chmod -R 775 storage bootstrap/cache
 
 USER ${user}
 
